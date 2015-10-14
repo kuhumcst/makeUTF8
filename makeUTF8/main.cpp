@@ -199,11 +199,11 @@ void iso(FILE * fi,FILE * fo,int * code)
     int kar;
     while((kar = fgetc(fi)) != EOF)
         {
-        if(kar >= 0xA0)
+        if(kar >= 0x80)
             {
-            assert(0 <= kar - 0xA0);
-            assert(kar - 0xA0 < 96);
-            kar = code[kar - 0xA0];
+            assert(0 <= kar - 0x80);
+            assert(kar - 0x80 < 128);
+            kar = code[kar - 0x80];
             }
         UnicodeToUtf8(kar,fo); // No reason to call surrogate() instead.
         }
@@ -652,8 +652,8 @@ int main(int argc,char * argv[])
     if(argc > 1)
         {
         if(argv[1][0] == '-')
-            {
-            convtable = getCode(strtol(argv[1]+1,0,10));
+            {long code = strtol(argv[1]+1,0,10);
+            convtable = getCode(code);
             if(!convtable)
                 {
                 if(argv[1][1] == 'h')
@@ -678,7 +678,11 @@ int main(int argc,char * argv[])
                     printf("14 	Latin-8 Celtic\n");
                     printf("15 	Latin-9 euro sign € and the letters Š, š, Ž, ž, Œ, œ, and Ÿ\n");
                     printf("16 	Latin-10 South-Eastern European (Albanian, Croatian, Hungarian, Italian, Polish, Romanian and Slovenian, but also Finnish, French, German and Irish Gaelic)\n");
+                    printf("850 	CodePage 850\n");
                     return 0;
+                    }
+                if(code)
+                    {
                     }
                 else
                     {

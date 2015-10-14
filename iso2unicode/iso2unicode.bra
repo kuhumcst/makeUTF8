@@ -1,0 +1,134 @@
+{iso2unicode.bra
+
+Read conversion tables downloaded from ftp.unicode.org
+and convert to a table of 15 elements with each element
+containing an array of integers of 128 elements from A0-FF.}
+
+X=
+  ( readFile
+  =   file hexIn hexOut comment list sep
+    .   get$(!arg,STR):?file
+      & out$(fileRead !arg)
+      & "{ ":?sep
+      & :?list
+      & 128:?loc
+      &   whl
+        ' ( @(!file:%?line \n ?file)
+          & ( @(!line:"#" ?)
+            |   @(!line:0x ?hexIn \t ?hexOut \t#\t ?comment)
+              & (   x2d$!hexIn:?decIn
+                  & !decIn:~<128
+                  &   whl
+                    ' ( !decIn:>!loc
+                      &     !list
+                            !sep
+                            0x00
+                            upp$(d2x$!loc)
+                            " // not defined"
+                            "\n "
+                        : ?list
+                      & 1+!loc:?loc
+                      )
+                  & !list !sep !hexOut " // " !comment "\n ":?list
+                  & ", ":?sep
+                  & 1+!loc:?loc
+                | 
+                )
+            | 
+            )
+          )
+      &   whl
+        ' ( 256:>!loc
+          &   !list !sep 0x00 upp$(d2x$!loc) " // not defined " "\n "
+            : ?list
+          & 1+!loc:?loc
+          )
+      & str$(!list "}\n")
+  )
+  (write=.)
+  ( new
+  =   i code codes sep
+    .   0:?i
+      &     "#include \"iso2unicode.h\""
+            \n
+            "typedef int code[128];"
+            \n
+            \n
+            "code codes[16]="
+            \n
+        : ?codes
+      & "{":?sep
+      &   whl
+        ' ( !i:<16
+          & 1+!i:?i
+          & (       (X.readFile)
+                  $ (str$("D:\\download\\unicode\\8859-" !i ".TXT"))
+                : ?code
+              & !codes !sep !code:?codes
+              & ",":?sep
+            | !i:12
+            )
+          )
+      &     str
+          $ ( !codes
+              ",   { // CodePage 850
+    0xC7,0xFC,0xE9,0xE2,0xE4,0xE0,0xE5,0xE7,0xEA,0xEB,0xE8,0xEF,0xEE,0xEC,0xC4,0xC5,
+    0xC9,0xE6,0xC6,0xF4,0xF6,0xF2,0xFB,0xF9,0xFF,0xD6,0xDC,0xF8,0xA3,0xD8,0xD7,0x9F,
+    0xE1,0xED,0xF3,0xFA,0xF1,0xD1,0xAA,0xBA,0xBF,0xAE,0xAC,0xBD,0xBC,0xA1,0xAB,0xBB,
+    0x9B,0x9C,0x9D,0x90,0x97,0xC1,0xC2,0xC0,0xA9,0x87,0x80,0x83,0x85,0xA2,0xA5,0x93,
+    0x94,0x99,0x98,0x96,0x91,0x9A,0xE3,0xC3,0x84,0x82,0x89,0x88,0x86,0x81,0x8A,0xA4,
+    0xF0,0xD0,0xCA,0xCB,0xC8,0x9E,0xCD,0xCE,0xCF,0x95,0x92,0x8D,0x8C,0xA6,0xCC,0x8B,
+    0xD3,0xDF,0xD4,0xD2,0xF5,0xD5,0xB5,0xFE,0xDE,0xDA,0xDB,0xD9,0xFD,0xDD,0xAF,0xB4,
+    0xAD,0xB1,0x8F,0xBE,0xB6,0xA7,0xF7,0xB8,0xB0,0xA8,0xB7,0xB9,0xB3,0xB2,0x8E,0xA0,
+    }
+};
+
+int * getCode(int isocode)
+    {
+    if(0 < isocode && isocode < 12)
+        return codes[isocode - 1];
+    else if(12 < isocode && isocode <= 16)
+        return codes[isocode - 2];
+    else if(850 == isocode)
+        return codes[15];
+    else
+        return 0;
+    }
+"
+            )
+        : ?codes
+      & put$(!codes,"iso2unicodeGenerated.cpp",NEW)
+      &   put
+        $ ( "#ifndef ISO2UNICODE_H
+#define ISO2UNICODE_H
+      
+int * getCode(int isocode);
+
+#endif
+"
+          , "iso2unicodeGenerated.h"
+          , NEW
+          )
+  );
+
+r=
+  get'"iso2unicode.bra"
+& sys$(str$(del " " iso2unicode ".bak"))
+& sys$(str$(ren " " "iso2unicode.bra" " " iso2unicode ".bak"))
+&   put
+  $ ( "{iso2unicode.bra
+
+Read conversion tables downloaded from ftp.unicode.org
+and convert to a table of 15 elements with each element
+containing an array of integers of 128 elements from A0-FF.}
+
+"
+    , "iso2unicode.bra"
+    , NEW
+    )
+& lst'(X,"iso2unicode.bra",APP)
+& put'(\n,"iso2unicode.bra",APP)
+& lst'(r,"iso2unicode.bra",APP)
+& put$(str$("\nnew'" X ";\n"),"iso2unicode.bra",APP);
+
+new'X;
