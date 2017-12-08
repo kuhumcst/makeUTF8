@@ -176,7 +176,7 @@ void bitpat(int c,int n)
     }
 
 // EF BB BF = 1110 1111  1011 1011 1011 1111 = 1111 11 1011 11 1111 = 11111110 11111111 = FEFF = Byte Order Mark
-// Added by many Windows programs to UTF8 files.
+// Added by many Windows programs to UTF-8 files.
 bool UTF8(FILE * fi)
     {
     int k[6];
@@ -311,7 +311,7 @@ int main(int argc,char * argv[])
             }
         else
             {
-            if(b1 == 0xEF && b2 == 0xBB && b3 == 0xBF) // BOM found, probably UTF8
+            if(b1 == 0xEF && b2 == 0xBB && b3 == 0xBF) // BOM found, probably UTF-8
                 {
                 ;// remove BOM
                 }

@@ -190,7 +190,7 @@ int main(int argc,char * argv[])
             }
         else
             {
-            if(b1 == 0xEF && b2 == 0xBB && b3 == 0xBF) // BOM found, probably UTF8
+            if(b1 == 0xEF && b2 == 0xBB && b3 == 0xBF) // BOM found, probably UTF-8
                 ; // remove BOM
             else
                 {
@@ -220,7 +220,7 @@ int main(int argc,char * argv[])
             else if(!UTF8(ftempInput,fo))
                 {
                 rewind(ftempInput);
-                if(b1 && b2 && b3)// "BOM" found, but not in UTF8 file!
+                if(b1 && b2 && b3)// "BOM" found, but not in UTF-8 file!
                     {// write "BOM"
                     Put(b1,fo);
                     Put(b2,fo);
