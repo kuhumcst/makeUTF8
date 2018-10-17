@@ -1549,7 +1549,7 @@ int * getCode(int isocode)
         return 0;
     }
 
-char * ISO_8859_names[17] = 
+const char * ISO_8859_names[17] = 
     {0
     ,"Western Europe"
     ,"Western and Central Europe"
